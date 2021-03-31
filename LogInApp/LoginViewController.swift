@@ -12,13 +12,21 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    let users = [
+    private let users = [
         "user" : "1234",
         "admin" : "password"
     ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        userNameTextField.delegate = self
+        passwordTextField.delegate = self
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let welcomeVC = segue.destination as! WelcomeViewController
+        welcomeVC.userName = userNameTextField.text
     }
     
     @IBAction func logInButtonAction() {
@@ -52,16 +60,6 @@ class LoginViewController: UIViewController {
             showAlert(with: "Ooooops", and: "No such login!")
         }
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let welcomeVC = segue.destination as! WelcomeViewController
-        welcomeVC.userName = userNameTextField.text
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        view.endEditing(true)
-    }
 }
 
 extension LoginViewController {
@@ -75,3 +73,21 @@ extension LoginViewController {
         present(alert, animated: true)
     }
 }
+
+extension LoginViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == userNameTextField {
+            passwordTextField.becomeFirstResponder()
+        } else if textField == passwordTextField {
+            passwordTextField.resignFirstResponder()
+        }
+        return true
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
+    }
+}
+
